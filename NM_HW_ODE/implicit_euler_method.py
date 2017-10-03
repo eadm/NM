@@ -1,7 +1,8 @@
 import numpy as np
 
 
-def solve(system, conditions, dt):
+def solve(system, conditions):
+    dt = system["dt"]
     t = 0
     x, y, z = conditions
     xs, ys, zs, ts = [x], [y], [z], [t]

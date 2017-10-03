@@ -1,5 +1,6 @@
 
-def solve(system, conditions, dt):
+def solve(system, conditions):
+    dt = system["dt"]
     t = 0
 
     x, y, z = conditions

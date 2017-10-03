@@ -29,7 +29,7 @@ for r in np.arange(0.0, 30.0, 5.):
     # начальные условия (x, y, z)
     conditions = (0.1, 0.1, 0.1)
 
-    xs, ys, zs, ts = implicit_euler_method.solve(system, conditions, dt)
+    xs, ys, zs, ts = implicit_euler_method.solve(system, conditions)
 #     ax.plot(xs, ys, zs, label="r = %f" % r)
 #
 #     ppt.plot(ts, xs, label="x(t), r=%f" % r)

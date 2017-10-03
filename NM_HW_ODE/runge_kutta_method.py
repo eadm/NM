@@ -1,11 +1,11 @@
 def solve(system, conditions):
-    dt = 0.1
+    dt = system["dt"]
 
     t = 0
     xi, yi, zi = conditions
     xs, ys, zs, ts = [xi], [yi], [zi], [t]
 
-    for _ in range(500):
+    for _ in range(1000):
         xi1 = xi + __k(system, "x", xi, yi, zi, dt) * dt
         yi1 = yi + __k(system, "y", xi, yi, zi, dt) * dt
         zi1 = zi + __k(system, "z", xi, yi, zi, dt) * dt

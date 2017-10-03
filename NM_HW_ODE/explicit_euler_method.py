@@ -1,6 +1,3 @@
-# import math
-# import numpy as __np
-
 
 def solve(system, conditions):
     dt = 0.1

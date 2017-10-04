@@ -7,7 +7,7 @@ def solve(system, conditions):
     xi, yi, zi = conditions
     xs, ys, zs, ts = [xi], [yi], [zi], [0.]
 
-    for t in np.arange(0.0, system("t_max"), dt):
+    for t in np.arange(0.0, system["t_max"], dt):
         xi1 = xi + __k(system, "x", xi, yi, zi, dt) * dt
         yi1 = yi + __k(system, "y", xi, yi, zi, dt) * dt
         zi1 = zi + __k(system, "z", xi, yi, zi, dt) * dt

@@ -4,19 +4,19 @@ import numpy as np
 def solve(system, conditions):
     dt = system["dt"]
 
-    xi, yi, zi = conditions
-    xs, ys, zs, ts = [xi], [yi], [zi], [0.]
+    x, y, z = conditions
+    xs, ys, zs, ts = [x], [y], [z], [0.]
 
-    for t in np.arange(0.0, system["t_max"], dt):
-        xi1 = xi + __k(system, "x", xi, yi, zi, dt) * dt
-        yi1 = yi + __k(system, "y", xi, yi, zi, dt) * dt
-        zi1 = zi + __k(system, "z", xi, yi, zi, dt) * dt
+    for t in np.arange(dt, system["t_max"], dt):
+        x1 = x + __k(system, "x", x, y, z, dt) * dt
+        y1 = y + __k(system, "y", x, y, z, dt) * dt
+        z1 = z + __k(system, "z", x, y, z, dt) * dt
 
-        xi, yi, zi = xi1, yi1, zi1
+        x, y, z = x1, y1, z1
 
-        xs.append(xi)
-        ys.append(yi)
-        zs.append(zi)
+        xs.append(x)
+        ys.append(y)
+        zs.append(z)
         ts.append(t)
 
     return xs, ys, zs, ts

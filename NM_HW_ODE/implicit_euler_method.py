@@ -43,7 +43,7 @@ def solve(system, conditions):
         #     print v
         # v, converge = __newton_method(F_N, FM_N, [x, y, z], 0.01)
         x, y, z = v
-        print [x, y, z]
+        # print [x, y, z]
         t = t + dt
 
         xs.append(x)
@@ -53,6 +53,26 @@ def solve(system, conditions):
 
 
     return xs, ys, zs, ts
+
+
+def __seidel(F, x0, eps):
+    x = x0[:]
+
+    dist = 1
+    iterations = 10000
+    it = 1
+
+    while dist > eps and it < iterations:
+        x1 = np.array(x[:])
+        for i in range(len(x)):
+            f_v = np.vectorize(lambda f: f(x[0], x[1], x[2]))
+            x2 = f_v(F)
+            x1[i] = x2[i]
+        dist = np.linalg.norm(x1 - x)
+        x = x1
+        it += 1
+
+    return x
 
 
 # mb
@@ -67,6 +87,8 @@ def __simple_iterations(F, x0, eps):
         x1 = f_v(F)
 
         dist = np.linalg.norm(x1 - x)
+        # if any(math.isnan(t) or math.isinf(t) for t in x1):
+        #     break
         x = x1
         it += 1
 

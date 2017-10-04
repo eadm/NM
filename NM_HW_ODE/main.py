@@ -4,19 +4,20 @@ import numpy as np
 import pylab as py
 import explicit_euler_method
 import implicit_euler_method
+import adams_predictor_corrector_method
 import runge_kutta_method
 
 delta = 10.
 b = 8. / 3
 dt = 0.01
-t_max = 20.
+t_max = 100.
 
 fig = py.figure()
 ax = fig.add_subplot(111, projection='3d')
 
 f, ppt = py.subplots()
 
-for r in np.arange(0.0, 30.0, 5.):
+for r in np.arange(4., 4.5, 35.):
     print "r = %f" % r
     system = {
         "x": lambda x, y, z: -delta * x + delta * y,
@@ -30,9 +31,30 @@ for r in np.arange(0.0, 30.0, 5.):
     }
 
     # начальные условия (x, y, z)
-    conditions = (5., 5.2, 5.)
+    conditions = (1., 2., 3.)
+
+    xs, ys, zs, ts = explicit_euler_method.solve(system, conditions)
+    ax.plot(xs, ys, zs, label="r = %f" % r)
+
+    ppt.plot(ts, xs, label="x(t), r=%f" % r)
+    ppt.plot(ts, ys, label="y(t), r=%f" % r)
+    ppt.plot(ts, zs, label="z(t), r=%f" % r)
 
     xs, ys, zs, ts = implicit_euler_method.solve(system, conditions)
+    ax.plot(xs, ys, zs, label="r = %f" % r)
+
+    ppt.plot(ts, xs, label="x(t), r=%f" % r)
+    ppt.plot(ts, ys, label="y(t), r=%f" % r)
+    ppt.plot(ts, zs, label="z(t), r=%f" % r)
+
+    xs, ys, zs, ts = runge_kutta_method.solve(system, conditions)
+    ax.plot(xs, ys, zs, label="r = %f" % r)
+
+    ppt.plot(ts, xs, label="x(t), r=%f" % r)
+    ppt.plot(ts, ys, label="y(t), r=%f" % r)
+    ppt.plot(ts, zs, label="z(t), r=%f" % r)
+
+    xs, ys, zs, ts = adams_predictor_corrector_method.solve(system, conditions)
     ax.plot(xs, ys, zs, label="r = %f" % r)
 
     ppt.plot(ts, xs, label="x(t), r=%f" % r)

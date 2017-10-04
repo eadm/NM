@@ -9,12 +9,17 @@ def solve(system, conditions):
 
     for _ in range(1000):
         F = [
+            lambda x1, y1, z1: (system["delta"] * y1 + x) / (1 + system["delta"] * system["dt"]),
+            lambda x1, y1, z1: (y + system["r"] * x1 * system["dt"] - x1 * z1 * system["dt"]) / (1 + system["dt"]),
+            lambda x1, y1, z1: (z + x1 * y1 * system["b"] * system["dt"]) / (1 + system["b"] * system["dt"])
+        ]
+        F_N = [
             lambda x1, y1, z1: x - (system["delta"] * y1 + x) / (1 + system["delta"] * system["dt"]),
             lambda x1, y1, z1: y - (y + system["r"] * x1 * system["dt"] - x1 * z1 * system["dt"]) / (1 + system["dt"]),
             lambda x1, y1, z1: z - (z + x1 * y1 * system["b"] * system["dt"]) / (1 + system["b"] * system["dt"])
         ]
 
-        FM = [
+        FM_N = [
             [
                 lambda x1, y1, z1: 1,
                 lambda x1, y1, z1: -(system["delta"] * system["dt"]) / (1 + system["delta"] * system["dt"]),
@@ -31,7 +36,13 @@ def solve(system, conditions):
             ]
         ]
 
-        x, y, z = __newton_method(F, FM, [x, y, z], 0.1)
+        # x, y, z = __newton_method(F, FM, [x, y, z], 0.8)
+        v, converge = __simple_iterations(F, [x, y, z], 0.01)
+        # if not converge:
+        #     print "Not converge"
+        #     print v
+        # v, converge = __newton_method(F_N, FM_N, [x, y, z], 0.01)
+        x, y, z = v
         print [x, y, z]
         t = t + dt
 
@@ -44,6 +55,24 @@ def solve(system, conditions):
     return xs, ys, zs, ts
 
 
+# mb
+def __simple_iterations(F, x0, eps):
+    x = x0[:]
+
+    dist = 1
+    iterations = 10000
+    it = 1
+    while dist > eps and it < iterations:
+        f_v = np.vectorize(lambda f: f(x[0], x[1], x[2]))
+        x1 = f_v(F)
+
+        dist = np.linalg.norm(x1 - x)
+        x = x1
+        it += 1
+
+    return x, it < iterations
+
+
 def __newton_method(F, FM, x0, eps):
     x = x0[:]
 
@@ -52,7 +81,9 @@ def __newton_method(F, FM, x0, eps):
     print x
 
     dist = 1
-    while dist > eps:
+    iterations = 10000
+    it = 1
+    while dist > eps and it < iterations:
         f_v = np.vectorize(lambda f: f(x[0], x[1], x[2]))
         W = f_v(FM)
         F1 = f_v(F)
@@ -61,6 +92,6 @@ def __newton_method(F, FM, x0, eps):
 
         dist = np.linalg.norm(x1 - x)
         x = x1
-        print x
+        it += 1
 
-    return x
+    return x, it < iterations

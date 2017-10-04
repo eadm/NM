@@ -17,6 +17,18 @@ ax = fig.add_subplot(111, projection='3d')
 
 f, ppt = py.subplots()
 
+
+def solve_with_method(method, system, conditions, ax, ppt, labes_suffix):
+    r = system["r"]
+    xs, ys, zs, ts = method.solve(system, conditions)
+
+    ax.plot(xs, ys, zs, label=("r = %f " + labes_suffix) % r)
+
+    ppt.plot(ts, xs, label=("x(t), r=%f " + labes_suffix) % r)
+    ppt.plot(ts, ys, label=("y(t), r=%f " + labes_suffix) % r)
+    ppt.plot(ts, zs, label=("z(t), r=%f " + labes_suffix) % r)
+
+
 for r in np.arange(4., 4.5, 35.):
     print "r = %f" % r
     system = {
@@ -32,34 +44,10 @@ for r in np.arange(4., 4.5, 35.):
 
     # начальные условия (x, y, z)
     conditions = (1., 2., 3.)
-
-    xs, ys, zs, ts = explicit_euler_method.solve(system, conditions)
-    ax.plot(xs, ys, zs, label="r = %f" % r)
-
-    ppt.plot(ts, xs, label="x(t), r=%f" % r)
-    ppt.plot(ts, ys, label="y(t), r=%f" % r)
-    ppt.plot(ts, zs, label="z(t), r=%f" % r)
-
-    xs, ys, zs, ts = implicit_euler_method.solve(system, conditions)
-    ax.plot(xs, ys, zs, label="r = %f" % r)
-
-    ppt.plot(ts, xs, label="x(t), r=%f" % r)
-    ppt.plot(ts, ys, label="y(t), r=%f" % r)
-    ppt.plot(ts, zs, label="z(t), r=%f" % r)
-
-    xs, ys, zs, ts = runge_kutta_method.solve(system, conditions)
-    ax.plot(xs, ys, zs, label="r = %f" % r)
-
-    ppt.plot(ts, xs, label="x(t), r=%f" % r)
-    ppt.plot(ts, ys, label="y(t), r=%f" % r)
-    ppt.plot(ts, zs, label="z(t), r=%f" % r)
-
-    xs, ys, zs, ts = adams_predictor_corrector_method.solve(system, conditions)
-    ax.plot(xs, ys, zs, label="r = %f" % r)
-
-    ppt.plot(ts, xs, label="x(t), r=%f" % r)
-    ppt.plot(ts, ys, label="y(t), r=%f" % r)
-    ppt.plot(ts, zs, label="z(t), r=%f" % r)
+    solve_with_method(explicit_euler_method, system, conditions, ax, ppt, "ex Euler")
+    solve_with_method(implicit_euler_method, system, conditions, ax, ppt, "im Euler")
+    solve_with_method(runge_kutta_method, system, conditions, ax, ppt, "Runge-Kutta")
+    solve_with_method(adams_predictor_corrector_method, system, conditions, ax, ppt, "Adams P-C")
 
 ax.legend()
 ppt.legend()

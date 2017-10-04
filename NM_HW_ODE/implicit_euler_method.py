@@ -8,10 +8,15 @@ def solve(system, conditions):
     xs, ys, zs, ts = [x], [y], [z], [t]
 
     for _ in range(1000):
+        # F = [
+        #     lambda x1, y1, z1: (system["delta"] * y1 + x) / (1 + system["delta"] * system["dt"]),
+        #     lambda x1, y1, z1: (y + system["r"] * x1 * system["dt"] - x1 * z1 * system["dt"]) / (1 + system["dt"]),
+        #     lambda x1, y1, z1: (z + x1 * y1 * system["dt"]) / (1 + system["b"] * system["dt"])
+        # ]
         F = [
-            lambda x1, y1, z1: (system["delta"] * y1 + x) / (1 + system["delta"] * system["dt"]),
-            lambda x1, y1, z1: (y + system["r"] * x1 * system["dt"] - x1 * z1 * system["dt"]) / (1 + system["dt"]),
-            lambda x1, y1, z1: (z + x1 * y1 * system["b"] * system["dt"]) / (1 + system["b"] * system["dt"])
+            lambda x1, y1, z1: x + (-system["delta"] * x1 + system["delta"] * y1) * system["dt"],
+            lambda x1, y1, z1: y + (-x1 * z1 + system["r"] * x1 - y1) * system["dt"],
+            lambda x1, y1, z1: z + (x1 * y1 - system["b"] * z1) * system["dt"]
         ]
         F_N = [
             lambda x1, y1, z1: x - (system["delta"] * y1 + x) / (1 + system["delta"] * system["dt"]),

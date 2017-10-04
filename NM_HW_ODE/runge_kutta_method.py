@@ -1,16 +1,18 @@
+import numpy as np
+
+
 def solve(system, conditions):
     dt = system["dt"]
 
-    t = 0
     xi, yi, zi = conditions
-    xs, ys, zs, ts = [xi], [yi], [zi], [t]
+    xs, ys, zs, ts = [xi], [yi], [zi], [0.]
 
-    for _ in range(1000):
+    for t in np.arange(0.0, system("t_max"), dt):
         xi1 = xi + __k(system, "x", xi, yi, zi, dt) * dt
         yi1 = yi + __k(system, "y", xi, yi, zi, dt) * dt
         zi1 = zi + __k(system, "z", xi, yi, zi, dt) * dt
 
-        xi, yi, zi, t = xi1, yi1, zi1, t + dt
+        xi, yi, zi = xi1, yi1, zi1
 
         xs.append(xi)
         ys.append(yi)

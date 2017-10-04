@@ -9,6 +9,7 @@ import runge_kutta_method
 delta = 10.
 b = 8. / 3
 dt = 0.01
+t_max = 20.
 
 fig = py.figure()
 ax = fig.add_subplot(111, projection='3d')
@@ -24,7 +25,8 @@ for r in np.arange(0.0, 30.0, 5.):
         "r": r,
         "delta": delta,
         "b": b,
-        "dt": dt
+        "dt": dt,
+        "t_max": t_max
     }
 
     # начальные условия (x, y, z)

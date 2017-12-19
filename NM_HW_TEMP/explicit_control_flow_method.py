@@ -39,4 +39,4 @@ def __b(v, bounds):
 
 
 def __Lh(u, g, dx, Tj):
-    return -u * ((Tj["i+1"] - Tj["i"]) / dx) + g * ((Tj["i-1"] + Tj["i+1"] - 2 * Tj["i"]) / dx / dx)
+    return -u * ((Tj["i"] - Tj["i-1"]) / dx) + g * ((Tj["i-1"] + Tj["i+1"] - 2 * Tj["i"]) / dx / dx)

@@ -14,7 +14,7 @@ def solve(u, g, conditions):
     for i in range(xl):  # T[x][t]
         T[i][0] = T0(xs[i])
 
-    for j in range(0, tl - 1):
+    for j in range(tl - 1):
         for i in range(xl):
             Tj = {
                 "i-1": T[__b(i - 1, (0, xl - 1))][j],

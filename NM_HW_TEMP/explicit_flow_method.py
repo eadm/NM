@@ -7,12 +7,7 @@ def solve(u, g, conditions):
     dt, dx = conditions['dt'], conditions['dx']
     T0 = conditions["T"]
 
-    xs, ts = [], []
-    for i in np.arange(x0, xn, dx):
-        xs.append(i)
-    for j in np.arange(t0, tm, dt):
-        ts.append(j)
-    xs, ts = np.array(xs), np.array(ts)
+    xs, ts = np.arange(x0, xn, dx), np.arange(t0, tm, dt)
     xl, tl = len(xs), len(ts)
 
     T = np.zeros([xl, tl])
@@ -41,14 +36,6 @@ def __b(v, bounds):
     if v > bounds[1]:
         return bounds[1]
     return v
-
-
-def __u(u, t, x, T):
-    return u(t, x, T)
-
-
-def __g(g, t, x, T):
-    return g(t, x, T)
 
 
 def __Lh(u, g, dx, Tj):

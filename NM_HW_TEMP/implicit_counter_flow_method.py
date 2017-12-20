@@ -26,13 +26,30 @@ def solve(u, g, conditions):
             m[i][min(i + 1, xl - 1)] = -r
             m[i][i] = (1 + s + 2 * r)
 
-        ts = __solve_diagonal(m, b)
-        for i in range(len(ts)):
-            T[i][j + 1] = ts[i]
+        tx = __solve_diagonal(m, b)
+        for i in range(len(tx)):
+            T[i][j + 1] = tx[i]
 
     return T
 
 
-def __solve_diagonal(m, b):
+def __solve_diagonal(m, d):
+    n = len(d) - 1
+    xs = np.zeros(n + 1)
 
-    return []
+    als, bls = np.zeros(n + 1), np.zeros(n + 1)
+    als[0] = - m[0][1] / m[0][0]
+    bls[0] = - d[0] / m[0][0]
+
+    for i in range(1, n):
+        a = m[i][i - 1]
+        b = m[i][i]
+        c = m[i][i + 1]
+        als[i] = - c / (a * als[i - 1] + b)
+        bls[i] = (d[i] - a * bls[i - 1]) / (a * als[i - 1] + b)
+
+    xs[n] = (d[n] - m[n][n - 1] * m[n - 1][n - 1]) / (m[n][n - 1] * als[n - 1] + m[n][n])
+
+    for i in range(n - 1, -1, -1):
+        xs[i] = als[i] * xs[i + 1] + bls[i]
+    return xs

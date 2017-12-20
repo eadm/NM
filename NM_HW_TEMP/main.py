@@ -3,11 +3,13 @@ import cases
 import pylab as pl
 import explicit_counter_flow_method
 import explicit_flow_method
+import leapfrog_method
 
 # u, g, conditions = cases.get_steps()
-u, g, conditions = cases.get_flash_light()
+# u, g, conditions = cases.get_flash_light()
+u, g, conditions = cases.get_waves()
 
-cs = explicit_flow_method.solve(u, g, conditions)
+cs = leapfrog_method.solve(u, g, conditions)
 
 m_x, m_y = np.mgrid[
     slice(conditions["x_min"], conditions["x_max"], conditions["dx"]),

@@ -28,7 +28,7 @@ def solve(consts, conditions):
         T[i][zl - 1] = T0
 
     for j in range(1, zl):
-        X[0][j] = 1
+        X[0][j] = Xn
         T[0][j] = T0
 
     for j in range(tl - 1):

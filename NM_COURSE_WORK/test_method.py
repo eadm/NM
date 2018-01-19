@@ -10,6 +10,7 @@ def solve(consts, conditions):
     zn, tm = conditions["z_max"], conditions["t_max"]
     dz, dt = conditions['dz'], conditions['dt']
     T0, Tm = conditions["T0"], conditions["Tm"]
+    X0, Xn = conditions["X0"], conditions["Xn"]
 
     zs, ts = np.arange(z0, zn, dz), np.arange(t0, tm, dt)
     zl, tl = len(zs), len(ts)
@@ -21,17 +22,17 @@ def solve(consts, conditions):
         return -K * (x ** alpha) * np.math.exp(-E / R / t)
 
     for i in range(tl):  # T[t][x]
-        X[i][0] = 0
-        X[i][zl - 1] = 1
+        X[i][0] = X0
+        X[i][zl - 1] = Xn
         T[i][0] = Tm
         T[i][zl - 1] = T0
 
     for j in range(1, zl):
-        X[0][j] = 1
-        T[0][j] = Tm
+        X[0][j] = Xn
+        T[0][j] = T0
 
     for j in range(tl - 1):
-        for i in range(zl):
+        for i in range(1, zl - 1):
             Xj = {
                 "i-1": X[j][__b(i - 1, (0, zl - 1))],
                 "i": X[j][i],

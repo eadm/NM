@@ -46,7 +46,7 @@ def solve(consts, conditions):
 
         for i in range(xl):
             w = __w(X[j][i], T[j][i], consts)
-            b[i] = T[j][i] - ro * Q * w * X[j + 1][i]
+            b[i] = T[j][i] - Q * w * X[j + 1][i] * dt / C
 
             Ld = lamda * dt / ro / C / dx / dx
             m[i][max(i - 1, 0)] = -Ld

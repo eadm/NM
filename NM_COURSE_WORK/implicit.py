@@ -20,7 +20,7 @@ def solve(consts, conditions):
     X[0][0] = Xn
     T = np.zeros([tl, xl])
     T[0][0] = Tm
-    for i in range(1, tl):
+    for i in range(1, xl):
         T[0][i] = T0
         X[0][i] = X0
 

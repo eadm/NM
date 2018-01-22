@@ -8,7 +8,7 @@ consts = {
     "K": 1.6e6,
     "E": 8.e4,
     "R": 8.314,
-    "alpha": 2.,
+    "alpha": 1.0001,
     "Q": 7.e5,
     "ro": 830.,
     "C": 1980.,
@@ -20,16 +20,20 @@ conditions = {
     "z_min": 0.,
     "z_max": 0.1,
     "t_min": 0.,
-    "t_max": 300.,
+    "t_max": 3000.,
     "T0": 293.,
     "Tm": 293. + (consts["Q"] / consts["C"]),
     "X0": 0.,
     "Xn": 1.,
-    "dt": 0.3,
-    "dz": 0.00001
+    "dt": 3.,
+    "dz": 0.0001
 }
 
 print "Tm = " + str(conditions["Tm"]) + " K"
+
+kappa = consts["lambda"] / consts["ro"] / consts["C"]
+
+consts["D"] = kappa
 
 
 def v():
@@ -42,10 +46,7 @@ def v():
 print "U = " + str(v()) + " m/sec"
 print "U = " + str(v() * 6000) + " mm/min"
 
-kappa = consts["lambda"] / consts["ro"] / consts["C"]
-
 print "kappa = " + str(kappa)
-
 sigma_h = kappa / v()
 print "sigma_h = " + str(sigma_h)
 sigma_D = consts["D"] / v()

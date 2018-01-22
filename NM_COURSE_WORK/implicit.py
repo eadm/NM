@@ -30,11 +30,13 @@ def solve(consts, conditions):
         b = np.zeros(xl)
         for i in range(xl):
             b[i] = X[j][i]
+            kappa = D * dt / dx / dx
             w = __w(X[j][i], T[j][i], consts)
 
-            m[i][max(i - 1, 0)] = -D * dt / dx / dx
-            m[i][min(i + 1, xl - 1)] = -dt / dx / dx
-            m[i][i] = (1 + 2 * D * dt / dx / dx - dt * w)
+            m[i][max(i - 1, 0)] = -kappa
+            m[i][min(i + 1, xl - 1)] = -kappa
+            m[i][i] = 2 * kappa + 1 + dt * w
+        # print m
 
         tx = __solve_diagonal(m, b)
         for i in range(len(tx)):
@@ -45,10 +47,10 @@ def solve(consts, conditions):
         b = np.zeros(xl)
 
         for i in range(xl):
-            w = __w(X[j][i], T[j][i], consts)
-            b[i] = T[j][i] - Q * w * X[j + 1][i] * dt / C
-
             Ld = lamda * dt / ro / C / dx / dx
+            w = __w(X[j][i], T[j][i], consts)
+            b[i] = T[j][i] + Q / C * w * X[j + 1][i] * dt
+
             m[i][max(i - 1, 0)] = -Ld
             m[i][min(i + 1, xl - 1)] = -Ld
             m[i][i] = 1 + 2 * Ld
@@ -61,7 +63,7 @@ def solve(consts, conditions):
 
 
 def __w(X, T, consts):
-    return -consts["K"] * (X ** (consts["alpha"] - 1.)) * np.exp(-consts["E"] / consts["R"] / T)
+    return consts["K"] * (X ** (consts["alpha"] - 1.)) * np.exp(-consts["E"] / consts["R"] / T)
 
 
 def __solve_diagonal(m, d):

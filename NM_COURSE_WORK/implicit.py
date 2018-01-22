@@ -38,7 +38,12 @@ def solve(consts, conditions):
             m[i][i] = 2 * kappa + 1 + dt * w
         # print m
 
-        tx = __solve_diagonal(m, b)
+        tx = np.linalg.solve(m, b)
+        # print np.allclose(np.dot(m, tx), b)
+        # print np.dot(m, tx)
+        # print tx
+        # print np.linalg.solve(m, b)
+        # print "--------"
         for i in range(len(tx)):
             X[j + 1][i] = tx[i]
 
@@ -55,7 +60,7 @@ def solve(consts, conditions):
             m[i][min(i + 1, xl - 1)] = -Ld
             m[i][i] = 1 + 2 * Ld
 
-        tx = __solve_diagonal(m, b)
+        tx = np.linalg.solve(m, b)
         for i in range(len(tx)):
             T[j + 1][i] = tx[i]
 
@@ -63,7 +68,7 @@ def solve(consts, conditions):
 
 
 def __w(X, T, consts):
-    return consts["K"] * (X ** (consts["alpha"] - 1.)) * np.exp(-consts["E"] / consts["R"] / T)
+    return consts["K"] * np.power(X, consts["alpha"] - 1.) * np.exp(-consts["E"] / consts["R"] / T)
 
 
 def __solve_diagonal(m, d):

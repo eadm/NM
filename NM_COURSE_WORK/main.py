@@ -8,7 +8,7 @@ consts = {
     "K": 1.6e6,
     "E": 8.e4,
     "R": 8.314,
-    "alpha": 1.0001,
+    "alpha": 1.,
     "Q": 7.e5,
     "ro": 830.,
     "C": 1980.,
@@ -18,14 +18,14 @@ consts = {
 
 conditions = {
     "z_min": 0.,
-    "z_max": 0.1,
+    "z_max": 0.03,
     "t_min": 0.,
-    "t_max": 3000.,
+    "t_max": 300.,
     "T0": 293.,
     "Tm": 293. + (consts["Q"] / consts["C"]),
     "X0": 1.,
     "Xn": 0.,
-    "dt": 3.,
+    "dt": 0.01,
     "dz": 0.0001
 }
 
@@ -33,7 +33,7 @@ print "Tm = " + str(conditions["Tm"]) + " K"
 
 kappa = consts["lambda"] / consts["ro"] / consts["C"]
 
-consts["D"] = kappa
+# consts["D"] = kappa
 
 
 def v():
@@ -67,4 +67,5 @@ m_z, m_y = np.mgrid[
 
 # print T
 pl.pcolormesh(m_z, m_y, X)
+# pl.plot(np.arange(conditions["z_min"], conditions["z_max"], conditions["dz"]), X[25000])
 pl.show()

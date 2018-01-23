@@ -29,14 +29,20 @@ def solve(consts, conditions):
         m = np.zeros((xl, xl))
         b = np.zeros(xl)
         for i in range(xl):
-            b[i] = X[j][i]
-            kappa = D * dt / dx / dx
+            b[i] = X[j][i] / dt
+            kappa = D / dx / dx
             w = __w(X[j][i], T[j][i], consts)
 
             m[i][max(i - 1, 0)] = -kappa
             m[i][min(i + 1, xl - 1)] = -kappa
-            m[i][i] = 2 * kappa + 1 + dt * w
+            m[i][i] = 2 * kappa + 1 / dt + w
+        m[0][0] = 1.
+        m[0][1] = 0.
+        m[-1][-2] = -1.
+        m[-1][-1] = 1.
         # print m
+        b[0] = 1.
+        b[-1] = 0.
 
         tx = np.linalg.solve(m, b)
         # print np.allclose(np.dot(m, tx), b)
@@ -52,13 +58,23 @@ def solve(consts, conditions):
         b = np.zeros(xl)
 
         for i in range(xl):
-            Ld = lamda * dt / ro / C / dx / dx
-            w = __w(X[j][i], T[j][i], consts)
-            b[i] = T[j][i] + Q / C * w * X[j + 1][i] * dt
+            # Ld = lamda * dt / ro / C / dx / dx
+            w = __w(X[j][i], T[j][i], consts) * X[j][i]
+            b[i] = ro * C / dt * T[j][i] - ro * Q * w
+            #
+            # m[i][max(i - 1, 0)] = -Ld
+            # m[i][min(i + 1, xl - 1)] = -Ld
+            # m[i][i] = 1 + 2 * Ld
+            m[i][max(i - 1, 0)] = -lamda / dx / dx
+            m[i][min(i + 1, xl - 1)] = -lamda / dx / dx
+            m[i][i] = ro * C / dt + 2 * lamda / dx / dx
+        m[0][0] = 1.
+        m[0][1] = 0.
+        m[-1][-2] = -1.
+        m[-1][-1] = 1.
 
-            m[i][max(i - 1, 0)] = -Ld
-            m[i][min(i + 1, xl - 1)] = -Ld
-            m[i][i] = 1 + 2 * Ld
+        b[0] = Tm
+        b[-1] = 0.
 
         tx = np.linalg.solve(m, b)
         for i in range(len(tx)):

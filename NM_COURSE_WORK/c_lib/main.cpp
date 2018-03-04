@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdio>
 #include <cmath>
+#include "algorithm"
 
 using namespace std;
 
@@ -122,37 +123,34 @@ void solve(int xl, int tl, double **X, double **T) {
     }
 }
 
-int main(int argc, char *argv[]) {
-    if (argc != ARG_COUNT) {
-        cout << "argc != " << ARG_COUNT << endl;
-        exit(0);
-    }
+pair<double **, double **> start(double x_min, double x_max, double dx, double t_min, double t_max, double dt,
+                                 double X0, double Xn, double T0, double Tm, double D, double C, double Q, double ro,
+                                 double lambda, double alpha, double K, double E, double R) {
+    conditions.x_min = x_min;
+    conditions.x_max = x_max;
+    conditions.dx = dx;
 
-    conditions.x_min = stod(argv[1]);
-    conditions.x_max = stod(argv[2]);
-    conditions.dx = stod(argv[3]);
+    conditions.t_min = t_min;
+    conditions.t_max = t_max;
+    conditions.dt = dt;
 
-    conditions.t_min = stod(argv[4]);
-    conditions.t_max = stod(argv[5]);
-    conditions.dt = stod(argv[6]);
+    conditions.X0 = X0;
+    conditions.Xn = Xn;
 
-    conditions.X0 = stod(argv[7]);
-    conditions.Xn = stod(argv[8]);
+    conditions.T0 = T0;
+    conditions.Tm = Tm;
 
-    conditions.T0 = stod(argv[9]);
-    conditions.Tm = stod(argv[10]);
+    consts.D = D;
+    consts.C = C;
+    consts.Q = Q;
 
-    consts.D = stod(argv[11]);
-    consts.C = stod(argv[12]);
-    consts.Q = stod(argv[13]);
+    consts.ro = ro;
+    consts.lambda = lambda;
+    consts.alpha = alpha;
 
-    consts.ro = stod(argv[14]);
-    consts.lambda = stod(argv[15]);
-    consts.alpha = stod(argv[16]);
-
-    consts.K = stod(argv[17]);
-    consts.E = stod(argv[18]);
-    consts.R = stod(argv[19]);
+    consts.K = K;
+    consts.E = E;
+    consts.R = R;
 
     int xl = int((conditions.x_max - conditions.x_min) / conditions.dx);
     int tl = int((conditions.t_max - conditions.t_min) / conditions.dt);
@@ -180,21 +178,41 @@ int main(int argc, char *argv[]) {
 
     solve(xl, tl, X, T);
 
+    return make_pair(X, T);
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != ARG_COUNT) {
+        cout << "argc != " << ARG_COUNT << endl;
+        exit(0);
+    }
+
+    auto p = start(stod(argv[1]), stod(argv[2]), stod(argv[3]), stod(argv[4]), stod(argv[5]), stod(argv[6]),
+                   stod(argv[7]), stod(argv[8]), stod(argv[9]), stod(argv[10]), stod(argv[11]), stod(argv[12]),
+                   stod(argv[13]), stod(argv[14]), stod(argv[15]), stod(argv[16]), stod(argv[17]), stod(argv[18]),
+                   stod(argv[19]));
+
+    int xl = int((conditions.x_max - conditions.x_min) / conditions.dx);
+    int tl = int((conditions.t_max - conditions.t_min) / conditions.dt);
+
+    double **X = p.first;
+    double **T = p.second;
+
     freopen("X.out", "w+", stdout);
 
     for (int i = 0; i < tl; i++) {
         for (int j = 0; j < xl; j++) {
             printf("%.12f ", X[i][j]);
         }
-        cout << endl;
+        printf("\n");
     }
 
     freopen("T.out", "w+", stdout);
 
     for (int i = 0; i < tl; i++) {
         for (int j = 0; j < xl; j++) {
-            cout << T[i][j] << " ";
+            printf("%.3f ", T[i][j]);
         }
-        cout << endl;
+        printf("\n");
     }
 }

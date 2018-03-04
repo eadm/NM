@@ -1,37 +1,44 @@
-import test_method
 import numpy as np
 import pylab as pl
+import subprocess
 
-import implicit
+import c_wrapper
+import parser
 
 consts = {
-    "K": 1.6e6,
-    "E": 8.e4,
-    "R": 8.314,
-    "alpha": 1.,
-    "Q": 7.e5,
-    "ro": 830.,
+    "D": 8e-12,
     "C": 1980.,
+    "Q": 7e5,
+
+    "ro": 830.,
     "lambda": 0.13,
-    "D": 8.e-12
+    "alpha": 1.,
+
+    "K": 1.6e6,
+    "E": 8e4,
+    "R": 8.314,
 }
 
 conditions = {
     "z_min": 0.,
     "z_max": 0.03,
+    "dz": 0.0001,
+
     "t_min": 0.,
-    "t_max": 300.,
-    "T0": 293.,
-    "Tm": 293. + (consts["Q"] / consts["C"]),
+    "t_max": 500.,
+    "dt": 0.01,
+
     "X0": 1.,
     "Xn": 0.,
-    "dt": 0.01,
-    "dz": 0.0001
+
+    "T0": 293.,
+    "Tm": 293. + (consts["Q"] / consts["C"])
 }
 
 print "Tm = " + str(conditions["Tm"]) + " K"
 
 kappa = consts["lambda"] / consts["ro"] / consts["C"]
+
 
 # consts["D"] = kappa
 
@@ -56,7 +63,14 @@ print "betta = " + str(betta)
 sigma_r = sigma_h * betta
 print "sigma_r = " + str(sigma_r)
 
-X, T = implicit.solve(consts, conditions)
+l_args = c_wrapper.get_args('./c_lib/nm_course_work', consts, conditions)
+
+p = subprocess.Popen(l_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+output = p.communicate()[0]
+print output
+
+X = parser.parse_matrix('X.out')
+T = parser.parse_matrix('T.out')
 
 print X
 print T
@@ -65,7 +79,5 @@ m_z, m_y = np.mgrid[
     slice(conditions["t_min"], conditions["t_max"], conditions["dt"]),
     slice(conditions["z_min"], conditions["z_max"], conditions["dz"])]
 
-# print T
-pl.pcolormesh(m_z, m_y, X)
-# pl.plot(np.arange(conditions["z_min"], conditions["z_max"], conditions["dz"]), X[25000])
+pl.pcolormesh(m_z, m_y, T)
 pl.show()

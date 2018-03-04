@@ -1,1 +1,4 @@
 *.pyc
+NM_COURSE_WORK/c_lib/cmake_build
+NM_COURSE_WORK/c_lib/nm_course_work
+*.out

@@ -16,20 +16,6 @@ struct Conditions {
     double T0, Tm, X0, Xn;
 } conditions;
 
-void zeroing_out(int d1, int d2, double **array) {
-    for (int i = 0; i < d1; i++) {
-        for (int j = 0; j < d2; j++) {
-            array[i][j] = 0;
-        }
-    }
-}
-
-void zeroing_out(int d1, double *array) {
-    for (int i = 0; i < d1; i++) {
-        array[i] = 0;
-    }
-}
-
 double get_w(double x, double t) {
     return consts.K * pow(x, consts.alpha - 1) * exp(-consts.E / (consts.R * t));
 }
@@ -37,34 +23,28 @@ double get_w(double x, double t) {
 double *als, *bls, *cls;
 double *csucc, *freesucc;
 
-void solve_diagonal_java(int xl, double **m, double *d, double *tx) {
-    zeroing_out(xl, als);
-//    als[0] = -1;
+void solve_diagonal(int xl, double **m, double *d, double *tx) {
+    als[0] = -1;
     for (int i = 1; i < xl; i++) {
         als[i] = m[i][0];
     }
 
-    zeroing_out(xl, cls);
     cls[0] = m[0][0];
     for (int i = 1; i < xl; i++) {
         cls[i] = m[i][1];
     }
 
-    zeroing_out(xl, bls);
     bls[0] = m[0][1];
-//    bls[xl - 1] = -1;
+    bls[xl - 1] = -1;
     for (int i = 1; i < xl - 1; i++) {
         bls[i] = m[i][2];
     }
 
-    // suck dick
-    zeroing_out(xl, csucc);
     csucc[0] = cls[0];
     for (int i = 1; i < xl; i++) {
         csucc[i] = cls[i] - als[i] / csucc[i - 1] * bls[i - 1];
     }
 
-    zeroing_out(xl, freesucc);
     freesucc[0] = d[0];
     for (int i = 1; i < xl; i++) {
         freesucc[i] = d[i] - als[i] / csucc[i - 1] * freesucc[i - 1];
@@ -73,29 +53,6 @@ void solve_diagonal_java(int xl, double **m, double *d, double *tx) {
     tx[xl - 1] = freesucc[xl - 1] / csucc[xl - 1];
     for (int i = xl - 2; i >= 0; i--) {
         tx[i] = (freesucc[i] - bls[i] * tx[i + 1]) / csucc[i];
-    }
-}
-
-void solve_diagonal(int xl, int tl, double **m, double *d, double *tx) {
-    int n = xl - 1;
-    zeroing_out(xl, als);
-    zeroing_out(xl, bls);
-
-    als[0] = -m[0][1] / m[0][0];
-    bls[0] = -d[0] / m[0][0];
-
-    for (int i = 1; i < n; i++) {
-        double a = m[i][i - 1];
-        double b = m[i][i];
-        double c = m[i][i + 1];
-        als[i] = -c / (a * als[i - 1] + b);
-        bls[i] = (d[i] - a * bls[i - 1]) / (a * als[i - 1] + b);
-    }
-
-    tx[n] = (d[n] - m[n][n - 1] * m[n - 1][n - 1]) / (m[n][n - 1] * als[n - 1] + m[n][n]);
-
-    for (int i = n - 1; i > -1; i--) {
-        tx[i] = als[i] * tx[i + 1] + bls[i];
     }
 }
 
@@ -116,9 +73,6 @@ void solve(int xl, int tl, double **X, double **T) {
 
     for (int j = 0; j < tl - 1; j++) {
         // count T
-        zeroing_out(xl, xl, m);
-        zeroing_out(xl, b);
-
         for (int i = 0; i < xl; i++) {
             double w = get_w(X[j][i], T[j][i]) * X[j][i];
             double k1 = consts.lambda / (conditions.dx * conditions.dx);
@@ -138,15 +92,12 @@ void solve(int xl, int tl, double **X, double **T) {
         b[0] = conditions.Tm;
         b[xl - 1] = 0;
 
-        zeroing_out(xl, tx);
-        solve_diagonal_java(xl, m, b, tx);
+        solve_diagonal(xl, m, b, tx);
         for (int i = 0; i < xl; i++) {
             T[j + 1][i] = tx[i];
         }
 
         // count X
-        zeroing_out(xl, 3, m);
-        zeroing_out(xl, b);
         for (int i = 0; i < xl; i++) {
             b[i] = X[j][i] / conditions.dt;
             double kappa = consts.D / (conditions.dx * conditions.dx);
@@ -164,8 +115,7 @@ void solve(int xl, int tl, double **X, double **T) {
         b[0] = 1;
         b[xl - 1] = 0;
 
-        zeroing_out(xl, tx);
-        solve_diagonal_java(xl, m, b, tx);
+        solve_diagonal(xl, m, b, tx);
         for (int i = 0; i < xl; i++) {
             X[j + 1][i] = tx[i];
         }
